@@ -22,10 +22,13 @@
 ### Linux
 
 1. 安装中文字体包：
+
    ```bash
    sudo apt-get install fonts-arphic-uming  # Debian/Ubuntu
    ```
+
    或
+
    ```bash
    sudo yum install wqy-zenhei-fonts  # CentOS/Fedora
    ```
@@ -37,4 +40,3 @@
 ## 自定义字体路径
 
 您也可以修改程序代码的 `main()` 函数，通过参数指定自定义字体路径：
-
