@@ -1,6 +1,6 @@
 # x-pdf2md
 
-一个强大的工具，用于将PDF文档转换为Markdown格式，同时保留文档的结构和布局。
+一个基于paddle平台以及多模态模型构建的强大的工具，用于将PDF文档转换为Markdown格式，同时保留文档的结构和布局。
 
 ## 功能特点
 
@@ -143,7 +143,7 @@ python -m remote_image.image_serve
 命令行方式：
 
 ```bash
-python process_pdf.py -o output_dir --upload --output-md result.md
+python process_pdf.py -p your_document.pdf -o output_dir --upload --output-md result.md
 ```
 
 Python脚本方式：
@@ -181,15 +181,18 @@ with open("result.md", "w", encoding="utf-8") as f:
 
 ### 参数说明
 
-- `-o, --output`: 输出目录路径
-- `-s, --start_page`: 起始页码（从0开始）
-- `-e, --end_page`: 结束页码
-- `-d, --dpi`: 图像分辨率，默认300
-- `--threshold_lr`: 左右栏阈值，默认0.9
-- `--threshold_cross`: 跨栏阈值，默认0.3
-- `--no-filter`: 不过滤区域
-- `--upload`: 启用图片上传
-- `--output-md`: Markdown输出文件路径，默认output.md
+| 参数 | 描述 | 默认值 |
+|------|------|--------|
+| `-p, --pdf` | PDF文件路径 | - |
+| `-o, --output` | 输出目录路径 | - |
+| `-s, --start_page` | 起始页码（从0开始） | 0 |
+| `-e, --end_page` | 结束页码 | None |
+| `-d, --dpi` | 图像分辨率 | 300 |
+| `--threshold_lr` | 左右栏阈值 | 0.9 |
+| `--threshold_cross` | 跨栏阈值 | 0.3 |
+| `--no-filter` | 不过滤区域 | False |
+| `--upload` | 启用图片上传 | False |
+| `--output-md` | Markdown输出文件路径 | output.md |
 
 ## 项目结构
 
