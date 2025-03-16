@@ -3,7 +3,7 @@ import os
 # 服务器配置
 HOST = "0.0.0.0"
 PORT = 8100
-BASE_URL = "http://localhost:8100"
+BASE_URL = f"http://{HOST}:{PORT}"
 
 # 上传配置
 UPLOAD_DIR = os.path.join(os.path.dirname(__file__), "upload_images")

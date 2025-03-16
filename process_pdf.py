@@ -79,7 +79,7 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(description="PDF文档处理工具")
-    # parser.add_argument("-p", "--pdf", required=True, help="输入PDF文件路径")
+    parser.add_argument("-p", "--pdf", required=True, help="输入PDF文件路径")
     parser.add_argument("-o", "--output", default="output", help="输出目录路径")
     parser.add_argument(
         "-s", "--start_page", type=int, default=0, help="起始页码（从0开始）"
@@ -95,12 +95,12 @@ if __name__ == "__main__":
     parser.add_argument("--output-md", type=str, default="output.md", help="Markdown输出文件路径")
     args = parser.parse_args()
 
-    # # 初始化图片上传器（如果需要）
-    # image_uploader = None
-    # if args.upload:
-    image_uploader = default_uploader
+    # 初始化图片上传器（如果需要）
+    image_uploader = None
+    if args.upload:
+        image_uploader = default_uploader
 
-    # pdf = args.pdf
+    pdf = args.pdf
     output_dir = args.output
     start_page = args.start_page
     end_page = args.end_page
@@ -111,7 +111,7 @@ if __name__ == "__main__":
 
     # 处理PDF
     regions = process_pdf_document(
-        pdf_path="test_datas/test.pdf",
+        pdf_path=pdf,
         output_dir=output_dir,
         start_page=start_page,
         end_page=end_page,
