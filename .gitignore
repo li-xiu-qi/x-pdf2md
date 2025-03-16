@@ -1,0 +1,40 @@
+# Python字节码
+__pycache__/
+*.py[cod]
+*$py.class
+
+# 分发/打包
+dist/
+build/
+*.egg-info/
+
+# 虚拟环境
+venv/
+env/
+ENV/
+.venv/
+
+# 环境变量文件（包含敏感信息）
+.env
+
+# IDE相关文件
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# 输出和临时文件
+output/
+*.out
+*.log
+*.md
+!README.md
+
+# PDF和图像临时文件
+*_images/
+*_page_*/
+*.pdf
+
+# 系统文件
+.DS_Store
+Thumbs.db

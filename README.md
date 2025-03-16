@@ -1,163 +1,88 @@
-# X-PDF2MD: PDF转Markdown工具
+# x-pdf2md
 
-[![语言](https://img.shields.io/badge/语言-Python-blue)]()
-[![版本](https://img.shields.io/badge/版本-0.0.0-brightgreen)]()
-[![作者](https://img.shields.io/badge/作者-筱可-orange)]()
+一个强大的工具，用于将PDF文档转换为Markdown格式，同时保留文档的结构和布局。
 
-## 📚 项目简介
+## 功能特点
 
-X-PDF2MD是一个强大的文档版面分析与转换工具（基于飞桨平台），可以将PDF文档或文档图片转换为结构化的Markdown文件。该工具结合了版面分析技术，能够准确识别文档中的各种元素（如文本、标题、表格、图像和图表等），并将其转换为格式良好的Markdown内容，保留原始文档的结构和排版。
+- PDF到图像的转换
+- 智能页面布局分析
+- 自动区域识别（文本、表格、图像、公式等）
+- OCR文本提取
+- 图表描述生成
+- 表格内容提取
+- 公式识别
+- 支持图像上传到远程服务器
+- 生成格式美观的Markdown文档
 
-**微信公众号**: 筱可AI研习社
-
-## ✨ 预计主要功能
-
-- 🔍 **精准版面分析**: 识别并分类文档中的各种元素
-- 📊 **智能元素排序**: 根据文档左右栏布局智能排序元素
-- 🖼️ **可视化结果**: 生成包含边界框和标签的可视化结果
-- 📝 **Markdown转换**: 将版面分析结果转换为结构化Markdown
-- 🔄 **多元素支持**: 处理文本、标题、表格、图像、图表和公式等
-
-## 🛠️ 安装指南
+## 安装
 
 ### 前提条件
 
-- Python 3.10+
-- pip包管理器
-
-### 安装步骤
-
-1. 克隆仓库：
+- Python 3.7+
+- 安装依赖包：
 
 ```bash
-git clone https://github.com/li-xiu-qi/x-pdf2md.git
-cd x-pdf2md
-```
-
-2. 安装依赖：
-
-（参考）
-
-```
-
-#### 注意事项：
-依赖PaddleX库，使用前请确保已正确安装paddlex及其依赖
-
-1.
-
-# cpu
-
-python -m pip install paddlepaddle==3.0.0rc0 -i https://www.paddlepaddle.org.cn/packages/stable/cpu/
-
-# gpu，该命令仅适用于 CUDA 版本为 11.8 的机器环境
-python -m pip install paddlepaddle-gpu==3.0.0rc0 -i https://www.paddlepaddle.org.cn/packages/stable/cu118/
-
-# gpu，该命令仅适用于 CUDA 版本为 12.3 的机器环境
-python -m pip install paddlepaddle-gpu==3.0.0rc0 -i https://www.paddlepaddle.org.cn/packages/stable/cu123/
-
----
-
-2. 
-
-pip install https://paddle-model-ecology.bj.bcebos.com/paddlex/whl/paddlex-3.0.0b2-py3-none-any.whl
-
-#### 参考资料
-https://paddlepaddle.github.io/PaddleX/main/installation/installation.html#1
-
-```
-<!-- ```bash
 pip install -r requirements.txt
-``` -->
-
-## 📋 使用方法
-
-### 基本使用
-
-1. 准备输入文件（版面分析的JSON结果和对应的图像文件）
-2. 运行处理程序：
-
-```python
-from visualize_boxes import DocumentElementProcessor
-
-processor = DocumentElementProcessor(output_dir="output", images_dir="images")
-processor.process_document("res.json", "visualization_result.png", "document.md")
 ```
 
-### 测试程序
+### 配置
 
-运行测试程序以验证功能：
+在`.env`文件中配置必要的API密钥（用于VLM功能）：
+
+```
+API_KEY=your_api_key_here
+```
+
+## 使用方法
+
+基本用法：
 
 ```bash
-python test_output.py
+python process_pdf.py --output output_directory --output-md result.md
 ```
 
-## 📁 项目结构
+### 参数说明
+
+- `-o, --output`: 输出目录路径
+- `-s, --start_page`: 起始页码（从0开始）
+- `-e, --end_page`: 结束页码
+- `-d, --dpi`: 图像分辨率，默认300
+- `--threshold_lr`: 左右栏阈值，默认0.9
+- `--threshold_cross`: 跨栏阈值，默认0.3
+- `--no-filter`: 不过滤区域
+- `--upload`: 启用图片上传
+- `--output-md`: Markdown输出文件路径，默认output.md
+
+## 项目结构
 
 ```
 x-pdf2md/
-├── visualize_boxes.py      # 主要处理类，处理版面分析结果
-├── element_processors.py   # 不同元素类型的处理器
-├── test_output.py          # 测试处理结果和图片引用
-├── res.json                # 示例版面分析结果
-├── font_info.md            # 中文字体配置说明
-└── README.md               # 项目说明文档
+├── process_pdf.py         # 主程序入口
+├── format_res.py          # 格式化处理模块
+├── pdf_utils/             # PDF处理工具
+├── image_utils/           # 图像处理工具
+│   ├── layout_utils/      # 布局分析工具
+├── ocr_utils/             # OCR处理模块
+├── image2md/              # 图像到Markdown转换工具
+├── remote_image/          # 远程图像上传工具
+├── .env                   # 环境变量配置
+└── README.md              # 项目文档
 ```
 
-## ⚙️ 配置选项
+## 示例
 
-### 中文字体配置
+将PDF转换为Markdown并上传图像：
 
-程序会自动查找系统中的中文字体。如需自定义字体，请参考 `font_info.md`。
-
-### 输出目录配置
-
-可通过初始化 `DocumentElementProcessor` 时设置 `output_dir` 和 `images_dir` 参数来定制输出位置。
-
-## 🌐 API参考
-
-### DocumentElementProcessor
-
-主要处理类，用于处理版面分析结果并生成输出。
-
-```python
-    # 示例使用
-    layout_json_path = "res.json"
-    visualization_path = "visualization_result.png"
-    markdown_filename = "document.md"
-    
-    processor = DocumentElementProcessor()
-    processor.process_document(layout_json_path, visualization_path, markdown_filename)
-
+```bash
+python process_pdf.py -o output_dir --upload --output-md result.md
 ```
 
-## 🔄 版本历史
+## 注意事项
 
-- **v0.0.0** - 初始版本，未开发完成
+- 确保API密钥设置正确以使用VLM功能
+- 对于大型PDF，建议增加内存分配
+- 处理速度取决于PDF复杂度和页数
 
-## 👥 贡献指南
+## 贡献
 
-欢迎贡献代码、提交问题或建议！请通过以下方式参与：
-
-1. Fork 项目
-2. 创建您的特性分支 (`git checkout -b feature/amazing-feature`)
-3. 提交您的更改 (`git commit -m 'Add some amazing feature'`)
-4. 推送到分支 (`git push origin feature/amazing-feature`)
-5. 提交Pull Request
-
-## 📄 许可证
-
-本项目采用MIT许可证 - 详情请查看 LICENSE 文件
-
-## 🙏 致谢
-
-特别感谢所有开源社区的贡献者以及提供反馈的用户。
-
-## 📬 联系方式
-
-微信公众号：筱可AI研习社
-
----
-
-<div align="center">
-    <sub>Built with ❤️ by 筱可</sub>
-</div>
+欢迎提交问题和拉取请求以改进此项目。

@@ -1,0 +1,14 @@
+fastapi
+pymupdf
+numpy
+openai
+opencv_contrib_python
+opencv_python
+opencv_python_headless
+paddlex
+Pillow
+python-dotenv
+Requests
+tqdm
+urllib3
+uvicorn

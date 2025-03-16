@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>图片列表</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 20px 0;
+        }
+        .image-item {
+            text-align: center;
+        }
+        .pagination {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .back-link {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="back-link">
+        <a href="/">返回首页</a>
+    </div>
+    <h1>图片列表</h1>
+    <div id="imageGrid" class="image-grid"></div>
+    <div id="pagination" class="pagination"></div>
+
+    <script>
+        async function loadImages(page = 1) {
+            try {
+                const response = await fetch(`/api/images?page=${page}`);
+                const data = await response.json();
+                
+                const imageGrid = document.getElementById('imageGrid');
+                imageGrid.innerHTML = data.images.map(img => `
+                    <div class="image-item">
+                        <img src="/images/${img.filename}" alt="${img.originalName}" style="max-width: 200px; margin: 10px;">
+                        <br>
+                        <a href="/images/${img.filename}" title="${img.filename}">${img.originalName}</a>
+                    </div>
+                `).join('');
+
+                const pagination = document.getElementById('pagination');
+                pagination.innerHTML = createPaginationHTML(data.currentPage, data.totalPages);
+            } catch (error) {
+                console.error('加载图片失败:', error);
+            }
+        }
+
+        function createPaginationHTML(currentPage, totalPages) {
+            let html = '';
+            if (totalPages > 1) {
+                if (currentPage > 1) {
+                    html += `<a href="#" onclick="loadImages(${currentPage-1})">上一页</a> `;
+                }
+                html += `第 ${currentPage}/${totalPages} 页 `;
+                if (currentPage < totalPages) {
+                    html += `<a href="#" onclick="loadImages(${currentPage+1})">下一页</a>`;
+                }
+            }
+            return html;
+        }
+
+        // 初始加载
+        loadImages();
+    </script>
+</body>
+</html>

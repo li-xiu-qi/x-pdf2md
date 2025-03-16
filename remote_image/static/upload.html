@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>上传图片</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        .upload-container {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .upload-preview {
+            max-width: 300px;
+            margin: 20px 0;
+            display: none;
+        }
+        .back-link {
+            margin-bottom: 20px;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            display: none;
+        }
+        .success {
+            background: #e8f5e9;
+            border: 1px solid #a5d6a7;
+        }
+        .error {
+            background: #ffebee;
+            border: 1px solid #ffcdd2;
+        }
+    </style>
+</head>
+<body>
+    <div class="back-link">
+        <a href="/">返回首页</a>
+    </div>
+    <h1>上传图片</h1>
+    <div class="upload-container">
+        <form id="uploadForm">
+            <input type="file" id="imageInput" accept="image/*" onchange="previewImage(event)">
+            <button type="submit">上传</button>
+        </form>
+        <img id="preview" class="upload-preview">
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        function previewImage(event) {
+            const preview = document.getElementById('preview');
+            const file = event.target.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            }
+
+            if (file) {
+                reader.readAsDataURL(file);
+            }
+        }
+
+        document.getElementById('uploadForm').onsubmit = async function(e) {
+            e.preventDefault();
+            const formData = new FormData();
+            const fileInput = document.getElementById('imageInput');
+            const resultDiv = document.getElementById('result');
+
+            if (fileInput.files.length === 0) {
+                resultDiv.textContent = '请选择要上传的图片';
+                resultDiv.className = 'result error';
+                resultDiv.style.display = 'block';
+                return;
+            }
+
+            formData.append('file', fileInput.files[0]);
+
+            try {
+                const response = await fetch('/image_upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                resultDiv.innerHTML = `上传成功！<br>
+                    原始文件名: ${data.originalName}<br>
+                    图片地址：<a href="${data.url}" target="_blank">${data.url}</a>`;
+                resultDiv.className = 'result success';
+                resultDiv.style.display = 'block';
+            } catch (error) {
+                resultDiv.textContent = '上传失败：' + error.message;
+                resultDiv.className = 'result error';
+                resultDiv.style.display = 'block';
+            }
+        };
+    </script>
+</body>
+</html>
