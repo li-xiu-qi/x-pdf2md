@@ -1,6 +1,7 @@
 # x-pdf2md
 
-一个基于paddle平台以及多模态模型构建的强大的工具，用于将PDF文档转换为Markdown格式，同时保留文档的结构和布局。
+![alt text](assets/images/d99084735737c77dc3d3304cb78a411f.png)
+一个基于paddle平台版面检测，公式识别等模型及多模态模型构建的强大的工具，用于将PDF文档转换为Markdown格式，同时保留文档的结构和布局。
 
 ## 功能特点
 
