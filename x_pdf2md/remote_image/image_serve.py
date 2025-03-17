@@ -14,7 +14,7 @@ app = FastAPI()
 
 # 挂载静态文件目录
 app.mount("/images", StaticFiles(directory=UPLOAD_DIR), name="images")
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("static", StaticFiles(directory="static"), name="static")
 
 @app.get("/")
 async def root():

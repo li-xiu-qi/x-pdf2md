@@ -4,16 +4,24 @@ from typing import Dict, List, Union
 import os
 import json
 from PIL import Image
-import numpy as np
 
-from ocr_utils.text_detection import text_detection
-from ocr_utils.text_recogniize import recognize_text
+from x_pdf2md.ocr_utils.text_detection import text_detection
+from x_pdf2md.ocr_utils.text_recogniize import recognize_text
+from x_pdf2md.config import get_model_config
 
 
 class OCRProcessor:
-    def __init__(self, det_model="PP-OCRv4_mobile_det", rec_model="PP-OCRv4_mobile_rec"):
-        self.det_model = det_model
-        self.rec_model = rec_model
+    def __init__(self, det_model=None, rec_model=None):
+        """
+        初始化OCR处理器
+        
+        Args:
+            det_model: 文本检测模型名称，None则使用配置
+            rec_model: 文本识别模型名称，None则使用配置
+        """
+        # 使用传入的模型名称或从配置中获取
+        self.det_model = det_model or get_model_config('ocr_det')
+        self.rec_model = rec_model or get_model_config('ocr_rec')
         
     def crop_image(self, image_path: str, box_coordinates: List) -> Image.Image:
         """根据坐标裁剪图像区域"""
@@ -137,11 +145,11 @@ if __name__ == "__main__":
     results = ocr.process_image(
         image_path,
         save_crops=True,
-        output_dir="./output/test_crops"
+        output_dir="output/test_crops"
     )
     
     # 保存结果到JSON文件
-    json_output_path = "./output/ocr_results.json"
+    json_output_path = "output/ocr_results.json"
     ocr.save_results_to_json(results, json_output_path)
     
     # 打印识别结果

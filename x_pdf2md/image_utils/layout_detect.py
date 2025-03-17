@@ -11,6 +11,7 @@ from typing import Dict, List, Any
 from paddlex import create_model
 
 from image_utils.layout_config import LayoutConfig
+from x_pdf2md.config import get_model_config
 
 
 def is_box_inside(box1: List[float], box2: List[float]) -> bool:
@@ -244,17 +245,22 @@ def merge_formula_numbers(boxes: List[Dict]) -> List[Dict]:
     
     return result_boxes
 
-def detect_layout(image_path: str, output_path: str = "./layout_output/layout_detection.json",model_name= "PP-DocLayout-L") -> Dict:
+def detect_layout(image_path: str, output_path: str = "./layout_output/layout_detection.json", model_name= "PP-DocLayout-L") -> Dict:
     """
     检测文档版面布局
 
     参数:
         image_path: 图像路径
         output_dir: 输出目录
+        model_name: 模型名称，默认为"PP-DocLayout-L"
 
     返回:
         版面分析结果
     """
+    # 如果model_name为None，从配置中获取
+    if model_name is None:
+        model_name = get_model_config('layout')
+        
     # 创建输出目录
     output_dir = os.path.dirname(output_path)
     os.makedirs(output_dir, exist_ok=True)

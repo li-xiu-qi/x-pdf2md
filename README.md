@@ -1,241 +1,314 @@
 # x-pdf2md
 
-![alt text](assets/images/d99084735737c77dc3d3304cb78a411f.png)
-一个基于paddle平台版面检测，公式识别等模型及多模态模型构建的强大的工具，用于将PDF文档转换为Markdown格式，同时保留文档的结构和布局。
+一个将PDF文档转换为Markdown的高级工具包，支持自动提取文本、识别公式、表格和图像。
 
 ## 功能特点
 
-- PDF到图像的转换
-- 智能页面布局分析
-- 自动区域识别（文本、表格、图像、公式等）
-- OCR文本提取
-- 图表描述生成
-- 表格内容提取
-- 公式识别
-- 支持图像上传到远程服务器
-- 生成格式美观的Markdown文档
-
-## 后续计划
-
-- [ ] 使用批处理优化处理效率
-- [ ] 支持非OCR模式，灵活处理图片和文本
-- [ ] 支持更灵活的模型切换以及模式选择
+- PDF文档页面转换为图像
+- 基于深度学习的版面分析
+- 数学公式识别并转换为LaTeX格式
+- 表格提取并转换为Markdown格式
+- 图像自动描述并上传
+- 多栏文本智能识别与排版
 
 ## 安装
 
-### 前提条件
+### 1. 安装特殊依赖
 
-- Python 3.10
-- 安装依赖包：
+本项目依赖于PaddlePaddle和PaddleX进行深度学习模型推理，这些依赖需要单独安装：
+
+#### CPU版本
 
 ```bash
-pip install -r requirements.txt
+# 首先安装PaddlePaddle CPU版本
+pip install paddlepaddle==3.0.0rc0 -i https://www.paddlepaddle.org.cn/packages/stable/cpu/
+
+# 然后安装PaddleX
+pip install https://paddle-model-ecology.bj.bcebos.com/paddlex/whl/paddlex-3.0.0rc0-py3-none-any.whl
 ```
 
-### 配置
+#### GPU版本（CUDA 11.8）
 
-在`.env`文件中配置必要的API密钥（用于VLM功能）：
+```bash
+# 安装PaddlePaddle GPU版本
+pip install paddlepaddle-gpu==3.0.0rc0 -i https://www.paddlepaddle.org.cn/packages/stable/cu118/
 
+# 然后安装PaddleX
+pip install https://paddle-model-ecology.bj.bcebos.com/paddlex/whl/paddlex-3.0.0rc0-py3-none-any.whl
 ```
-API_KEY=your_api_key_here
+
+#### 其他CUDA版本
+
+如果需要支持其他CUDA版本，请参考[PaddlePaddle官方安装指南](https://www.paddlepaddle.org.cn/install/quick)选择合适的安装命令。
+
+### 2. 安装项目本身
+
+```bash
+# 克隆项目
+git clone https://github.com/li-xiu-qi/x-pdf2md.git
+cd x-pdf2md
+
+# 安装项目及其依赖
+pip install .
+```
+
+或者直接使用pip安装：
+
+```bash
+# 从本地目录安装
+pip install -e .
+
+# 或从GitHub安装
+pip install git+https://github.com/li-xiu-qi/x-pdf2md.git
 ```
 
 ## 使用方法
 
-### 命令行调用
+### 作为命令行工具
 
-基本用法：
+从命令行转换PDF文件：
 
 ```bash
-python process_pdf.py -p input.pdf --output output_directory --output-md result.md
+# 基本用法
+x-pdf2md -p input.pdf -o output_dir --output-md result.md
+
+# 使用更多选项
+x-pdf2md -p input.pdf -o output_dir -s 0 -e 5 -d 300 --threshold_lr 0.9 --threshold_cross 0.3 --upload --output-md result.md
 ```
 
-### 通过Python脚本调用
+### 作为Python包导入
 
-您也可以在自己的Python代码中直接调用x-pdf2md的核心功能：
+#### 快速转换方法
 
 ```python
-from process_pdf import process_pdf_document
-from format_res import format_pdf_regions
-from remote_image import default_uploader
+from x_pdf2md.main import convert_pdf_to_markdown
 
-# 1. 处理PDF文档，获取区域列表
+# 转换并获取Markdown内容列表
+md_content_list = convert_pdf_to_markdown(
+    pdf_path="input.pdf",
+    output_dir="output",
+    start_page=0,
+    end_page=5,
+    dpi=300
+)
+
+# 或直接保存为文件
+output_path = convert_pdf_to_markdown(
+    pdf_path="input.pdf",
+    output_dir="output",
+    upload_images=True,  # 启用图片上传
+    output_md_path="result.md"
+)
+```
+
+#### 分步处理方法
+
+```python
+from x_pdf2md.process_pdf import process_pdf_document
+from x_pdf2md.format_res import format_pdf_regions
+from x_pdf2md.remote_image import default_uploader
+
+# 处理PDF文档
 regions = process_pdf_document(
-    pdf_path="your_document.pdf",
-    output_dir="output_directory",
-    start_page=0,          # 起始页码（从0开始）
-    end_page=None,         # 可选，结束页码
-    dpi=300,               # 图像分辨率
-    threshold_left_right=0.9,  # 左右栏阈值
-    threshold_cross=0.3,   # 跨栏阈值
+    pdf_path="input.pdf",
+    output_dir="output",
+    start_page=0,
+    end_page=None,
+    dpi=300
 )
 
-# 2. 格式化区域为Markdown
-# 如果不需要上传图片，可以传入None，默认使用default_uploader上传到本地的8100端口
-formatted_pages = format_pdf_regions(
-    page_regions=regions, 
-    image_uploader=default_uploader  # 或传入None不上传图片
-)
+# 格式化为Markdown（选择性启用图片上传）
+formatted_pages = format_pdf_regions(regions, default_uploader)
 
-# 3. 将结果保存到Markdown文件
-output_path = "result.md"
-with open(output_path, "w", encoding="utf-8") as f:
+# 保存结果
+with open("output.md", "w", encoding="utf-8") as f:
     f.write("\n\n---\n\n".join(formatted_pages))
-
-print(f"Markdown文件已保存到: {output_path}")
 ```
 
-#### 自定义图片上传器
+### 高级功能用法
 
-如果需要使用自定义的图片上传功能，可以实现自己的上传类：
+#### 公式识别与转换
 
 ```python
-from remote_image.image_uploader import ImageUploader
+from x_pdf2md.image_utils.formula_recognize import recognize_formula
 
-class MyCustomUploader(ImageUploader):
-    def upload(self, image_path: str) -> str:
-        # 实现自定义上传逻辑
-        # 返回上传后的URL
-        return "https://example.com/image.jpg"
-
-# 使用自定义上传器
-my_uploader = MyCustomUploader()
-formatted_pages = format_pdf_regions(regions, my_uploader)
+# 识别公式图像
+formula_latex = recognize_formula("path/to/formula_image.png")
+print(f"识别的公式: {formula_latex}")
 ```
 
-### 启动和使用图片服务
-
-如果您希望将图片存储在远程服务器上而不是使用本地路径，需要启动内置的图片服务。这对于需要在不同设备上查看生成的Markdown文档特别有用。
-
-#### 1. 配置图片服务
-
-在`remote_image/remote_image_config.py`中配置服务参数：
+#### 文本与表格提取
 
 ```python
-# 服务器配置
-HOST = "0.0.0.0"
-PORT = 8100
-BASE_URL = f"http://{HOST}:{PORT}"
+from x_pdf2md.image2md.vlm_function import extract_text_from_image, extract_table_from_image
 
-# 上传配置
-UPLOAD_DIR = os.path.join(os.path.dirname(__file__), "upload_images")
-if not os.path.exists(UPLOAD_DIR):
-    os.makedirs(UPLOAD_DIR)
+# 提取文本内容
+text = extract_text_from_image("path/to/text_image.png")
+print(f"提取的文本: {text}")
 
-# 图片名称映射文件路径
-IMAGE_NAMES_FILE = os.path.join(os.path.dirname(__file__), "image_names.json")
-
-# 图片服务器配置
-IMAGE_SERVER = {
-    "base_url": BASE_URL,
-    'timeout': 10,
-    'max_retries': 3
-}
+# 提取表格并转换为Markdown
+table_md = extract_table_from_image("path/to/table_image.png")
+print(f"提取的表格: {table_md}")
 ```
 
-#### 2. 启动图片服务
+#### 图片上传服务
+
+启动本地图片上传服务器：
 
 ```bash
 # 进入项目目录
-cd x-pdf2md
+cd x_pdf2md/remote_image
 
-# 启动图片服务
-python -m remote_image.image_serve
+# 启动服务
+python image_serve.py
 ```
 
-服务启动后，您可以访问 <http://localhost:8100> 查看图片管理界面。
+服务启动后，访问 http://localhost:8100 可以使用Web界面上传和管理图片。
 
-#### 3. 在PDF处理时启用图片上传
+## 参数说明
 
-命令行方式：
+### 命令行参数
 
-```bash
-python process_pdf.py -p your_document.pdf -o output_dir --upload --output-md result.md
+- `-p`, `--pdf`: 输入PDF文件路径（必填）
+- `-o`, `--output`: 输出目录路径，默认为"output"
+- `-s`, `--start_page`: 起始页码（从0开始），默认为0
+- `-e`, `--end_page`: 结束页码，默认为处理全部页面
+- `-d`, `--dpi`: 图像分辨率，默认为300
+- `--threshold_lr`: 左右栏阈值，默认为0.9
+- `--threshold_cross`: 跨栏阈值，默认为0.3
+- `--no-filter`: 不过滤区域
+- `--upload`: 启用图片上传
+- `--output-md`: Markdown输出文件路径，默认为"output.md"
+
+### 配置文件
+
+在项目根目录创建`.env`文件可配置环境变量：
+
+```
+API_KEY=your_api_key
+BASE_URL=https://api.example.com/v1
+HOST=0.0.0.0
+PORT=8100
+UPLOAD_DIR=./uploads
 ```
 
-Python脚本方式：
+## 配置方式
 
-```python
-from process_pdf import process_pdf_document
-from format_res import format_pdf_regions
-from remote_image import default_uploader
+### 环境变量配置
 
-# 确保先启动图片服务
-regions = process_pdf_document(
-    pdf_path="your_document.pdf",
-    output_dir="output_directory"
-)
-
-# 使用默认上传器(将图片上传到配置的服务器)
-formatted_pages = format_pdf_regions(
-    page_regions=regions, 
-    image_uploader=default_uploader
-)
-
-# 保存结果
-with open("result.md", "w", encoding="utf-8") as f:
-    f.write("\n\n---\n\n".join(formatted_pages))
-```
-
-#### 4. 图片服务API
-
-图片服务提供以下API：
-
-- `POST /image_upload` - 上传图片
-- `GET /api/images` - 获取已上传图片列表
-- `GET /images/{filename}` - 访问上传的图片
-- `GET /health` - 健康检查
-
-### 参数说明
-
-| 参数 | 描述 | 默认值 |
-|------|------|--------|
-| `-p, --pdf` | PDF文件路径 | - |
-| `-o, --output` | 输出目录路径 | - |
-| `-s, --start_page` | 起始页码（从0开始） | 0 |
-| `-e, --end_page` | 结束页码 | None |
-| `-d, --dpi` | 图像分辨率 | 300 |
-| `--threshold_lr` | 左右栏阈值 | 0.9 |
-| `--threshold_cross` | 跨栏阈值 | 0.3 |
-| `--no-filter` | 不过滤区域 | False |
-| `--upload` | 启用图片上传 | False |
-| `--output-md` | Markdown输出文件路径 | output.md |
+x-pdf2md支持通过环境变量或`.env`文件配置。创建`.env`文件在项目根目录：
 
 ## 项目结构
 
 ```
 x-pdf2md/
-├── process_pdf.py         # 主程序入口
-├── format_res.py          # 格式化处理模块
-├── pdf_utils/             # PDF处理工具
-├── image_utils/           # 图像处理工具
-│   ├── layout_utils/      # 布局分析工具
-├── ocr_utils/             # OCR处理模块
-├── image2md/              # 图像到Markdown转换工具
-├── remote_image/          # 远程图像上传工具
-│   ├── image_serve.py     # 图片服务器
-│   ├── image_uploader.py  # 图片上传抽象类
-│   └── remote_image_config.py # 图片服务配置
-├── .env                   # 环境变量配置
-└── README.md              # 项目文档
+├── x_pdf2md/                   # 主包目录
+│   ├── __init__.py             # 包初始化文件
+│   ├── main.py                 # 命令行入口点
+│   ├── process_pdf.py          # PDF处理核心功能
+│   ├── format_res.py           # 结果格式化
+│   ├── image_utils/            # 图像处理工具
+│   │   ├── formula_recognize.py  # 公式识别
+│   │   ├── process_page.py     # 页面处理
+│   │   ├── region_image.py     # 区域图像类
+│   │   └── layout_config.py    # 布局配置
+│   ├── image2md/               # 图像转MD工具
+│   ├── ocr_utils/              # OCR工具
+│   ├── pdf_utils/              # PDF工具
+│   ├── remote_image/           # 远程图像工具
+│   └── tests/                  # 测试目录
+├── setup.py                    # 安装脚本
+├── requirements.txt            # 依赖要求（CPU版）
+├── requirements-gpu.txt        # 依赖要求（GPU版）
+└── README.md                   # 项目说明
 ```
 
-## 示例
+## 依赖要求
 
-将PDF转换为Markdown并上传图像：
+### 基本依赖
+- Python >= 3.7
+- tqdm >= 4.45.0
+- pdf2image >= 1.14.0
+- Pillow >= 8.0.0
+- numpy >= 1.18.0
+- opencv-python >= 4.5.0
+- pytesseract >= 0.3.0
+- requests >= 2.25.0
+- fastapi
+- pymupdf
+- python-dotenv
+- uvicorn
+
+### 特殊依赖
+- paddlepaddle == 3.0.0rc0
+- paddlex == 3.0.0rc0
+
+## 模型下载
+
+PaddleX模型需要单独下载，程序首次运行时会自动下载相关模型。若要手动下载模型，可访问：
+- 公式识别模型：[PP-FormulaNet](https://github.com/PaddlePaddle/PaddleClas/blob/release/2.5/docs/zh_CN/models/PP-FormulaNet.md)
+- 版面分析模型：[PP-StructureV2](https://github.com/PaddlePaddle/PaddleOCR/blob/release/2.6/ppstructure/README_ch.md)
+
+## 开发指南
+
+### 安装开发依赖
 
 ```bash
-python process_pdf.py -p document.pdf -o output_dir --upload --output-md result.md
+# 安装开发依赖
+pip install -r requirements.txt
+
+# 安装pre-commit钩子
+pre-commit install
 ```
 
-## 注意事项
+### 代码风格
 
-- 确保API密钥设置正确以使用VLM功能
-- 对于大型PDF，建议增加内存分配
-- 处理速度取决于PDF复杂度和页数
-- 使用图片服务需确保配置的端口未被占用
-- 如果需要在公网访问图片服务，请设置适当的安全措施
+项目使用Black和isort进行代码格式化，使用flake8进行代码质量检查。
 
-## 贡献
+## 常见问题
 
-欢迎提交问题和拉取请求以改进此项目。
+**Q: 安装PaddlePaddle时出现错误怎么办？**
+
+A: 请确保您的Python版本兼容（建议使用Python 3.7-3.9），并参考[PaddlePaddle安装问题排查](https://www.paddlepaddle.org.cn/documentation/docs/zh/install/index_cn.html)。
+
+**Q: 模型下载很慢或失败怎么办？**
+
+A: 您可以手动下载模型并放置在对应目录中，参考模型下载部分的链接获取详细说明。
+
+**Q: 运行`x-pdf2md`命令时提示"不是内部或外部命令"怎么办？**
+
+A: 这通常意味着命令行工具没有正确安装或没有添加到系统PATH中。请尝试以下解决方法：
+
+1. 确保已经正确安装了包：
+   ```bash
+   pip install -e .
+   ```
+
+2. 安装后确认入口点是否已创建（在Python的Scripts目录中查找x-pdf2md.exe）：
+   ```bash
+   pip show x-pdf2md
+   # 查看installed-files.txt中是否有Scripts/x-pdf2md.exe
+   ```
+
+3. 如果仍然无法运行，可以尝试通过Python模块方式运行：
+   ```bash
+   python -m x_pdf2md.main -p input.pdf -o output_dir
+   ```
+
+4. 或者直接运行main.py：
+   ```bash
+   python x_pdf2md/main.py -p input.pdf -o output_dir
+   ```
+
+5. 检查setup.py中的entry_points配置是否正确：
+   ```python
+   entry_points={
+       'console_scripts': [
+           'x-pdf2md=x_pdf2md.main:main',
+       ],
+   }
+   ```
+
+## 开源协议
+
+本项目使用 [BSD 开源协议](./LICENSE)。

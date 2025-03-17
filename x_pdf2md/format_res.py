@@ -1,11 +1,11 @@
 from typing import List, Optional
 
-from image2md.get_image_title import get_image_title
-from image2md.vlm_function import extract_table_from_image, extract_text_from_image, describe_image
-from image_utils.formula_recognize import recognize_formula
-from ocr_utils.ocr_image import OCRProcessor
-from remote_image.image_uploader import ImageUploader
-from image_utils.region_image import RegionImage
+from x_pdf2md.image2md import get_image_title
+from x_pdf2md.image2md.vlm_function import extract_table_from_image, extract_text_from_image, describe_image
+from x_pdf2md.image_utils.formula_recognize import recognize_formula
+from x_pdf2md.ocr_utils.ocr_image import OCRProcessor
+from x_pdf2md.remote_image.image_uploader import ImageUploader
+from x_pdf2md.image_utils.region_image import RegionImage
 
 ocr_processor = OCRProcessor()
 

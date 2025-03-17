@@ -135,7 +135,7 @@ def text_detection(image_path, output_path="./output/res.json", model="PP-OCRv4_
             }
     """
     # 创建输出目录
-    os.makedirs("./output", exist_ok=True)
+    os.makedirs("output", exist_ok=True)
     
     # 初始化模型
     model = create_model(model_name=model)
