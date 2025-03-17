@@ -6,9 +6,16 @@ openai
 opencv_contrib_python
 opencv_python
 opencv_python_headless
-# PaddlePaddle CPU版本（必须在paddlex之前安装）
-paddlepaddle==3.0.0rc0 -i https://www.paddlepaddle.org.cn/packages/stable/cpu/
+
+# gpu，该命令仅适用于 CUDA 版本为 12.3 的机器环境
+# python -m pip install paddlepaddle-gpu==3.0.0rc0 -i https://www.paddlepaddle.org.cn/packages/stable/cu123/
+
+# PaddlePaddle GPU版本（CUDA 11.8，必须在paddlex之前安装）
+paddlepaddle-gpu==3.0.0rc0 -i https://www.paddlepaddle.org.cn/packages/stable/cu118/
 https://paddle-model-ecology.bj.bcebos.com/paddlex/whl/paddlex-3.0.0rc0-py3-none-any.whl
+
+
+
 Pillow
 python-dotenv
 Requests

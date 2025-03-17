@@ -24,7 +24,7 @@ ENV/
 *.swo
 
 # 输出和临时文件
-output/
+*output/
 *.out
 *.log
 *.md
@@ -34,7 +34,7 @@ output/
 *_images/
 *_page_*/
 *.pdf
-
+test_datas
 # 系统文件
 .DS_Store
 Thumbs.db

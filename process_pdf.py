@@ -2,9 +2,9 @@ import os
 from pathlib import Path
 from format_res import format_pdf_regions
 from pdf_utils.pdf2image import pdf_to_images
-from image_utils.layout_utils.process_page import process_page_layout
-from image_utils.layout_utils.layout_config import LayoutConfig
-from image_utils.layout_utils.region_image import RegionImage
+from image_utils.process_page import process_page_layout
+from image_utils.layout_config import LayoutConfig
+from image_utils.region_image import RegionImage
 from remote_image import default_uploader
 from typing import List, Optional
 from tqdm import tqdm
