@@ -228,14 +228,6 @@ x-pdf2md/
 python process_pdf.py -p document.pdf -o output_dir --upload --output-md result.md
 ```
 
-## 注意事项
-
-- 确保API密钥设置正确以使用VLM功能
-- 对于大型PDF，建议增加内存分配
-- 处理速度取决于PDF复杂度和页数
-- 使用图片服务需确保配置的端口未被占用
-- 如果需要在公网访问图片服务，请设置适当的安全措施
-
 ## 贡献
 
 欢迎提交问题和拉取请求以改进此项目。
