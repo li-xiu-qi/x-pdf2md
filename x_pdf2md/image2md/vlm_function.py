@@ -81,7 +81,7 @@ def _process_image_with_model(
 
 def extract_text_from_image(
     image_path: str,
-    model: str = "Qwen/Qwen2-VL-72B-Instruct",
+    model: str = None,
     ocr_prompt_path: str = None,
     api_key: str = None,
 ) -> str:
@@ -98,7 +98,7 @@ def extract_text_from_image(
 
 def describe_image(
     image_path: str,
-    model: str = "Qwen/Qwen2-VL-72B-Instruct",
+    model: str = None,
     description_prompt_path: str = None,
     api_key: str = None,
 ) -> str:
@@ -127,7 +127,7 @@ def process_table_content(result):
 
 def extract_table_from_image(
     image_path: str,
-    model: str = "Qwen/Qwen2-VL-72B-Instruct",
+    model: str = None,
     extract_table_prompt_path: str = None,
     api_key: str = None,
 ) -> str:

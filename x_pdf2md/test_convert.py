@@ -6,7 +6,7 @@ python -m x_pdf2md.test_convert
 
 import os
 from pathlib import Path
-from .main import convert_pdf_to_markdown
+from convert import convert_pdf_to_markdown
 
 
 def test_convert_pdf():
@@ -58,8 +58,4 @@ def test_convert_pdf():
 if __name__ == "__main__":
     # 当直接运行此文件时执行转换
     test_convert_pdf()
-    print("\n如果仍然无法正常运行，请尝试以下方法：")
-    print("1. 确保已经安装所有依赖:")
-    print("   pip install -e .")
-    print("2. 确保x_pdf2md/tests目录下有test.pdf文件")
-    print("3. 检查Python环境和PaddlePaddle安装状态")
+

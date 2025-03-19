@@ -1,53 +1,71 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-"""
-布局配置类 - 用于存储和管理版面分析的配置参数
-"""
-
-from dataclasses import dataclass
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Tuple
 
 
-@dataclass
 class LayoutConfig:
-    """版面分析配置类"""
-    
-    # 区域类型标签
-    REGION_LABELS = [
-        "text",            # 普通文本
-        "formula",         # 数学公式
-        "table",           # 表格
-        "image",           # 图像
-        "figure",          # 图表
-        "chart",           # 图形图表
-        "doc_title",       # 文档标题
-        "paragraph_title", # 段落标题
-        "abstract",        # 摘要
-        "figure_title",    # 图标题
-        "table_title",     # 表标题
-        "chart_title"      # 图表标题
+    # 可视化颜色配置 (RGB格式)
+    COLORS: Dict[str, Tuple[int, int, int]] = {
+        # 标题类
+        'doc_title': (255, 0, 128),  # 品红色
+        'paragraph_title': (255, 0, 0),  # 红色
+        'figure_title': (128, 0, 255),  # 紫色
+        'table_title': (255, 140, 0),  # 深橙色
+        'chart_title': (0, 215, 255),  # 浅青色
+
+        # 正文类
+        'text': (0, 255, 0),  # 绿色
+        'abstract': (0, 255, 191),  # 绿松石色
+        'aside_text': (152, 251, 152),  # 浅绿色
+        'footnote': (144, 238, 144),  # 淡绿色
+
+        # 图表类
+        'image': (0, 0, 255),  # 蓝色
+        'chart': (0, 255, 255),  # 青色
+        'table': (255, 165, 0),  # 橙色
+
+        # 公式和数字类
+        'formula': (255, 255, 0),  # 黄色
+        'formula_number': (255, 215, 0),  # 金色
+        'number': (218, 165, 32),  # 金麦色
+
+        # 页眉页脚类
+        'header': (169, 169, 169),  # 深灰色
+        'footer': (192, 192, 192),  # 浅灰色
+    }
+    DEFAULT_COLOR: Tuple[int, int, int] = (128, 128, 128)  # 灰色，用于未定义颜色的标签
+
+    # 需要进一步处理的标签 (白名单)
+    PROCESS_LABELS: List[str] = [
+        'paragraph_title', 'image', 'text',
+        'abstract', 'figure_title', 'formula',
+        'table_title', 'doc_title', 'table',
+        'chart', 'chart_title', 'formula_number'
     ]
-    
-    # 布局分析参数
-    min_region_height: int = 20        # 最小区域高度
-    min_region_width: int = 40         # 最小区域宽度
-    line_spacing: int = 10             # 行间距
-    paragraph_spacing: int = 20        # 段落间距
-    column_spacing: int = 50           # 栏间距
-    
-    # 文本检测参数
-    text_detection_threshold: float = 0.7  # 文本检测置信度阈值
-    
-    def __post_init__(self):
-        """初始化后处理"""
-        # 创建标签到索引的映射
-        self.label_to_index = {label: i for i, label in enumerate(self.REGION_LABELS)}
-        self.index_to_label = {i: label for i, label in enumerate(self.REGION_LABELS)}
-    
-    def get_label_index(self, label: str) -> int:
-        """获取标签对应的索引"""
-        return self.label_to_index.get(label, -1)
-    
-    def get_label_by_index(self, index: int) -> str:
-        """根据索引获取标签"""
-        return self.index_to_label.get(index, "unknown")
+
+    # 需要过滤掉的标签 (黑名单)
+    FILTER_LABELS: List[str] = [
+        'footnote', 'header', 'footer',
+        'aside_text', 'number'
+    ]
+
+    # 已知的所有标签及其ID (用于检测未知标签)
+    KNOWN_LABELS: Dict[int, str] = {
+        0: 'paragraph_title',
+        1: 'image',
+        2: 'text',
+        3: 'number',
+        4: 'abstract',
+        6: 'figure_title',
+        7: 'formula',
+        8: 'table',
+        9: 'table_title',
+        10: 'reference',
+        11: 'doc_title',
+        12: 'footnote',
+        13: 'header',
+        15: 'footer',
+        17: 'chart_title',
+        18: 'chart',
+        19: 'formula_number',
+        20: 'header_image',
+        22: 'aside_text',
+    }

@@ -27,6 +27,9 @@ DEFAULT_CONFIG = {
     "OCR_REC_MODEL": os.getenv("OCR_REC_MODEL", "PP-OCRv4_mobile_rec"),  # OCR识别模型
     "LAYOUT_MODEL": os.getenv("LAYOUT_MODEL", "PP-DocLayout-L"),  # 版面分析模型 (更新为PP-DocLayout-L)
 
+    # 多模态模型
+    "VLM_MODEL": os.getenv("VLM_MODEL", "Qwen/Qwen2.5-VL-72B-Instruct"),  # 多模态模型
+
     # 处理配置
     "DEFAULT_DPI": int(os.getenv("DEFAULT_DPI", "300")),  # 默认DPI
     "THRESHOLD_LEFT_RIGHT": float(os.getenv("THRESHOLD_LEFT_RIGHT", "0.9")),  # 左右栏阈值
@@ -88,7 +91,8 @@ def get_model_config(model_type: str) -> str:
         'formula': 'FORMULA_MODEL',
         'ocr_det': 'OCR_DET_MODEL',
         'ocr_rec': 'OCR_REC_MODEL',
-        'layout': 'LAYOUT_MODEL'
+        'layout': 'LAYOUT_MODEL',
+        'vlm': 'VLM_MODEL'
     }
     
     key = model_map.get(model_type)

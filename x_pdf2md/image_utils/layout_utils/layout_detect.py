@@ -1,6 +1,27 @@
+#!/usr/bin/env python  
+# -*- coding: utf-8 -*-
+# author：筱可
+# 2023-12-14
 """
-布局处理模块
-负责文档版面分析和处理
+使用说明：
+
+此模块用于PDF文档的版面分析，将图像中的不同元素(如文本、表格、公式等)进行检测和分类。
+
+主要功能：
+1. 检测文档布局元素并返回各元素的位置信息和类型
+2. 构建元素之间的层次关系(如嵌套关系)
+3. 合并公式与公式编号
+4. 过滤不需要的布局元素
+
+参数说明：
+image_path: 要分析的图像文件路径
+output_path: 结果输出的JSON文件路径
+model_name: 使用的布局检测模型名称
+
+注意事项：
+- 依赖PaddleX库和预训练的PP-DocLayout模型
+- 输出的坐标格式为[x1, y1, x2, y2]，表示左上角和右下角坐标
+- 本模块需要有足够的GPU或CPU资源用于模型推理
 """
 
 import cv2
@@ -10,7 +31,7 @@ import time
 from typing import Dict, List, Any
 from paddlex import create_model
 
-from image_utils.layout_utils.layout_config import LayoutConfig
+from x_pdf2md.image_utils.layout_config import LayoutConfig
 
 
 def is_box_inside(box1: List[float], box2: List[float]) -> bool:
@@ -244,24 +265,26 @@ def merge_formula_numbers(boxes: List[Dict]) -> List[Dict]:
     
     return result_boxes
 
-def detect_layout(image_path: str, output_path: str = "./layout_output/layout_detection.json",model_name= "PP-DocLayout-L") -> Dict:
+def detect_layout(image_path: str, output_path: str = "./layout_output/layout_detection.json", model_name: str = "PP-DocLayout-L") -> Dict:
     """
     检测文档版面布局
 
     参数:
         image_path: 图像路径
-        output_dir: 输出目录
+        output_path: 输出文件路径
+        model_name: 使用的模型名称
 
     返回:
-        版面分析结果
+        Dict: 版面分析结果，包含检测到的各类布局元素及其坐标
     """
     # 创建输出目录
-    output_dir = os.path.dirname(output_path)
+    output_dir: str = os.path.dirname(output_path)
     os.makedirs(output_dir, exist_ok=True)
     
     # 设置json输出路径
-    json_path = output_path if output_path.endswith(".json") else os.path.join(output_dir, "layout_detection.json")
+    json_path: str = output_path if output_path.endswith(".json") else os.path.join(output_dir, "layout_detection.json")
 
+    # 加载预训练模型
     model = create_model(model_name=model_name)
     output = model.predict(image_path, batch_size=1, layout_nms=True)
 
@@ -272,7 +295,7 @@ def detect_layout(image_path: str, output_path: str = "./layout_output/layout_de
 
     # 读取JSON文件
     with open(json_path, "r", encoding="utf-8") as f:
-        result = json.load(f)
+        result: Dict = json.load(f)
     
     # 过滤掉不需要处理的标签
     result["boxes"] = [box for box in result["boxes"] if box.get("label") not in LayoutConfig.FILTER_LABELS]
@@ -282,8 +305,9 @@ def detect_layout(image_path: str, output_path: str = "./layout_output/layout_de
     
     # 构建框层次结构
     result["boxes"] = build_box_hierarchy(result["boxes"])
-    # json dump到文件，使用json_path并在文件后面加入final标记
-    final_json_path = json_path.replace(".json", "_final.json")
+    
+    # 保存最终处理结果
+    final_json_path: str = json_path.replace(".json", "_final.json")
     print("Final JSON path:", final_json_path)
     with open(final_json_path, "w", encoding="utf-8") as f:
         json.dump(result, f, ensure_ascii=False, indent=2)
@@ -292,64 +316,8 @@ def detect_layout(image_path: str, output_path: str = "./layout_output/layout_de
 
 
 if __name__ == "__main__":
-    image_path = "./formula_inline.png"
-    output_dir = "output"
+    image_path: str = "./formula_inline.png"
+    output_dir: str = "output"
     os.makedirs(output_dir, exist_ok=True)
     # 测试文档版面分析
-    result = detect_layout(image_path=image_path, output_path=os.path.join(output_dir, "layout_detection.json"))
-
-
-
-# 布局检测结果分析
-
-## 检测信息
-
-# - 输入图片：layout.png
-# - 检测项目：页面布局元素
-# - 总检测框数：13
-
-# ## 检测结果详情
-
-# 检测到的元素类型统计：
-
-# - 表格(table): 2个
-# - 正文(text): 5个
-# - 表格标题(table_title): 2个
-# - 段落标题(paragraph_title): 4个
-
-# ```json
-# {
-#     // 输入图片路径
-#     "input_path": "layout.png",
-#     "page_index": null,
-#     "boxes": [
-#         // 表格区域 1
-#         {
-#             "cls_id": 8,
-#             "label": "table",
-#             "score": 0.9866,  // 置信度 98.66%
-#             "coordinate": [74.31, 105.71, 321.99, 299.11]  // [x1, y1, x2, y2]
-#         },
-#         // 正文区域 1
-#         {
-#             "cls_id": 2,
-#             "label": "text",
-#             "score": 0.9860,  // 置信度 98.60%
-#             "coordinate": [34.66, 349.91, 358.34, 611.34]  // [x1, y1, x2, y2]
-#         },
-#        ……
-#     ]
-# }
-# ```
-
-# ## 注意事项
-
-# 1. coordinate 坐标格式为 [x1, y1, x2, y2]，表示检测框的左上角和右下角坐标
-# 2. score 表示检测结果的置信度，范围 0-1
-# 3. cls_id 对应关系：
-#    - 0: paragraph_title
-#    - 2: text
-#    - 8: table
-#    - 9: table_title
-#    - 7: formula
-#    - 19: formula_number
+    result: Dict = detect_layout(image_path=image_path, output_path=os.path.join(output_dir, "layout_detection.json"))

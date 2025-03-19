@@ -135,6 +135,7 @@ def main():
                         help=f"OCR识别模型名称，默认为{DEFAULT_CONFIG['OCR_REC_MODEL']}")
     parser.add_argument("--layout-model", type=str, default=DEFAULT_CONFIG["LAYOUT_MODEL"], 
                         help=f"版面分析模型名称，默认为{DEFAULT_CONFIG['LAYOUT_MODEL']}")
+    parser.add_argument("--vlm-model", type=str, default=DEFAULT_CONFIG["VLM_MODEL"],)
     
     args = parser.parse_args()
 

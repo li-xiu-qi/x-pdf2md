@@ -53,8 +53,7 @@
 - 提取的 Markdown 格式文本会保留图像中的结构和公式，适用于文档集成。
 
 """
-
-
+from x_pdf2md.config import get_model_config
 
 _prompt = """
 你是一个可以识别图片的AI，你可以基于图片与用户进行友好的对话。
@@ -156,7 +155,7 @@ class ImageTextExtractor:
         self,
         image_url: str = None,
         local_image_path: str = None,
-        model: str = "Qwen/Qwen2-VL-72B-Instruct",
+        model: str = None,
         detail: str = "low",
         prompt: str = None,
         temperature: float = 0.1,
@@ -173,6 +172,8 @@ class ImageTextExtractor:
         :param top_p: 生成文本的 top_p 参数
         :return: 提取的 Markdown 格式文本
         """
+        if model is None:
+            model = get_model_config('vlm')
         if not image_url and not local_image_path:
             raise ValueError("Either image_url or local_image_path is required")
 
