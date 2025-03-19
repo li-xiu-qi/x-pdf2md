@@ -6,7 +6,8 @@ python -m x_pdf2md.test_convert
 
 import os
 from pathlib import Path
-from convert import convert_pdf_to_markdown
+
+from x_pdf2md.convert import convert_pdf_to_markdown
 
 
 def test_convert_pdf():

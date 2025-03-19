@@ -1,5 +1,5 @@
 {
-    "input_path": "C:\\Users\\k\\Documents\\project\\programming_project\\python_project\\importance\\x-pdf2md\\x_pdf2md\\output\\test_x_pdf2md_page_3\\29_formula_0.7731.png",
+    "input_path": "C:\\Users\\k\\Documents\\project\\programming_project\\python_project\\importance\\x-pdf2md\\x_pdf2md\\output\\test_x_pdf2md_page_6\\12_formula_0.7783.png",
     "page_index": null,
-    "rec_formula": "\\left\\{\\begin{array}{c}{\\dot{x}=\\ddot{x}}\\\\ {\\ddot{x}=\\frac{-\\left(I+m_{1}l^{2}\\right)r_{f}}{\\left(m_{1}+m_{2}\\right)I+m_{1}m_{2}l^{2}}\\dot{x}+\\frac{{m_{1}}^{2}\\mathrm{g}l^{2}}{\\left(m_{1}+m_{2}\\right)I+m_{1}m_{2}l^{2}}\\varphi+\\frac{\\left(I+m_{1}l^{2}\\right)}{\\left(m_{1}+m_{2}\\right)I+m_{1}m_{2}l^{2}}u}\\\\ {\\dot{\\varphi}=\\ddot{\\varphi}}\\\\ {\\ddot{\\varphi}=\\frac{m_{1}l r_{f}}{\\left(m_{1}+m_{2}\\right)I+m_{1}m_{2}l^{2}}\\dot{x}+\\frac{m_{1}\\mathrm{g}l\\left(m_{1}+m_{2}\\right)}{\\left(m_{1}+m_{2}\\right)I+m_{1}m_{2}l^{2}}\\varphi+\\frac{m_{1}l}{\\left(m_{1}+m_{2}\\right)I+m_{1}m_{2}l^{2}}u}\\end{array}\\right."
+    "rec_formula": "\\mathrm{~-~}\\qquad\\square\\qquad\\searrow"
 }
