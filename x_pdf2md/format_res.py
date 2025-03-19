@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from x_pdf2md.image2md import get_image_title
+from x_pdf2md.image2md.get_image_title import get_image_title
 from x_pdf2md.image2md.vlm_function import extract_table_from_image, extract_text_from_image, describe_image
 from x_pdf2md.image_utils.formula_recognize import recognize_formula
 from x_pdf2md.ocr_utils.ocr_image import OCRProcessor
