@@ -118,7 +118,7 @@ def process_table_content(result):
     table_content = extract_markdown_content(result)
     
     if not (table_content.startswith('|') and '|---' in table_content):
-        if '<table' in table_content.lower() and '</table>' in table_content.lower():
+        if '<table>' in table_content.lower() and '</table>' in table_content.lower():
             return table_content
         else:
             return f"```\n{table_content}\n```"

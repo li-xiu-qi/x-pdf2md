@@ -128,6 +128,38 @@ python image_serve.py
 
 服务启动后，访问 <http://localhost:8100> 可以使用Web界面上传和管理图片。
 
+#### 调用的时候可以传入default_uploader进行上传文件
+
+```python
+from x_pdf2md.remote_image import default_uploader
+
+    # 初始化图片上传器（如果需要）
+    image_uploader = None
+    if upload_images:
+        image_uploader = default_uploader
+
+    # 格式化结果，传递输出目录
+    formatted_pages = format_pdf_regions(regions, image_uploader, output_dir=output_dir)
+    
+    # 创建输出目录（如果需要）
+    if output_md_path:
+        output_dir = os.path.dirname(os.path.abspath(output_md_path))
+        if output_dir and not os.path.exists(output_dir):
+            os.makedirs(output_dir, exist_ok=True)
+            
+        # 保存为Markdown文件
+        with open(output_md_path, "w", encoding="utf-8") as f:
+            f.write("\n\n---\n\n".join(formatted_pages))
+        
+        # 输出处理统计
+        total_pages = len(regions)
+        total_regions = sum(len(page_regions) for page_regions in regions)
+        print(f"处理完成！共处理 {total_pages} 页，生成 {total_regions} 个区域图片")
+        print(f"Markdown文件已保存到: {output_md_path}")
+        
+        return output_md_path
+```
+
 ## 开源协议
 
 本项目使用 [BSD 开源协议](./LICENSE)。

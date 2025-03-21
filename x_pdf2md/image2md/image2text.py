@@ -67,27 +67,40 @@ import base64
 
 def extract_markdown_content(text: str) -> str:
     """
-    从文本中提取Markdown内容。
+    从文本中提取Markdown内容，自动去除markdown和html代码块标记。
 
     参数:
     text (str): 输入文本。
 
     返回:
-    str: 提取的Markdown内容，如果没有找到Markdown标记，则返回原始文本。
+    str: 提取的内容，如果没有找到Markdown或HTML标记，则返回原始文本。
     """
-    start_marker = "```markdown"
+    md_start_marker = "```markdown"
+    html_start_marker = "```html"
     end_marker = "```"
 
-    start_index = text.find(start_marker)
-    if start_index == -1:
-        return text.strip() if text else None
-
-    start_index += len(start_marker)
-    end_index = text.find(end_marker, start_index)
-
-    if end_index == -1:
-        return text[start_index:].strip()
-    return text[start_index:end_index].strip()
+    # 处理markdown代码块
+    md_start_index = text.find(md_start_marker)
+    if md_start_index != -1:
+        start_index = md_start_index + len(md_start_marker)
+        end_index = text.find(end_marker, start_index)
+        
+        if end_index == -1:
+            return text[start_index:].strip()
+        return text[start_index:end_index].strip()
+    
+    # 处理html代码块
+    html_start_index = text.find(html_start_marker)
+    if html_start_index != -1:
+        start_index = html_start_index + len(html_start_marker)
+        end_index = text.find(end_marker, start_index)
+        
+        if end_index == -1:
+            return text[start_index:].strip()
+        return text[start_index:end_index].strip()
+    
+    # 如果没有找到特定标记，返回原始文本
+    return text.strip() if text else None
 
 
 def image_to_base64(image_path: str) -> str:

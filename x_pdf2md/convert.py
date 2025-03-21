@@ -9,15 +9,19 @@ import os
 from pathlib import Path
 from typing import Optional, List, Union
 # 从process_pdf.py导入必要的依赖
-from x_pdf2md.markdown_formatter import format_pdf_regions
-from x_pdf2md.pdf_utils.pdf2image import pdf_to_images
-from x_pdf2md.image_utils.process_page import process_page_layout
-from x_pdf2md.image_utils.layout_config import LayoutConfig
-from x_pdf2md.image_utils.region_image import RegionImage
+
 from tqdm import tqdm
-# 保留原有的导入
+
+from x_pdf2md.config import DEFAULT_CONFIG, update_config
+from x_pdf2md.image_utils.process_page import process_page_layout
+from x_pdf2md.image_utils.region_image import RegionImage
+from x_pdf2md.markdown_formatter import format_pdf_regions
+from x_pdf2md.pdf_utils.pdf_to_image import pdf_to_images
 from x_pdf2md.remote_image import default_uploader
-from x_pdf2md.config import update_config, get_config, DEFAULT_CONFIG
+
+
+# 保留原有的导入
+
 
 
 def process_pdf_document(
