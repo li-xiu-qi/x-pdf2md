@@ -37,26 +37,23 @@ def test_convert_pdf():
     
     print(f"开始处理PDF文件: {pdf_path}")
     
-    try:
-        # 调用转换函数
-        output_path = convert_pdf_to_markdown(
-            pdf_path=pdf_path,
-            output_dir=output_dir,
-            start_page=0,
-            end_page=None,  # 处理所有页面
-            dpi=300,
-            upload_images=False,  # 默认不上传图片
-            output_md_path=os.path.join(output_dir, "test_result.md")
-        )
-        
-        print(f"PDF转换成功！输出文件路径: {output_path}")
-        return True
-    except Exception as e:
-        print(f"转换过程中出错: {str(e)}")
-        return False
+
+    output_path = convert_pdf_to_markdown(
+        pdf_path=pdf_path,
+        output_dir=output_dir,
+        start_page=0,
+        end_page=None,  # 处理所有页面
+        dpi=300,
+        upload_images=False,  # 默认不上传图片
+        output_md_path=os.path.join(output_dir, "test_result.md")
+    )
+
+    print(f"PDF转换成功！输出文件路径: {output_path}")
+    return output_path
 
 
 if __name__ == "__main__":
     # 当直接运行此文件时执行转换
+
     test_convert_pdf()
 

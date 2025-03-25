@@ -47,12 +47,41 @@ class TextCropper(ABC):
         """
         pass
 
+class RectCropper(TextCropper):
+    """矩形裁剪实现类 - 简单直接的矩形裁剪"""
+    
+    def crop(self, image: np.ndarray, polygon: np.ndarray) -> np.ndarray:
+        # 计算外接矩形
+        x, y, w, h = cv2.boundingRect(polygon)
+        
+        # 检查裁剪区域是否有效
+        if w <= 0 or h <= 0:
+            print(f"警告：无效的裁剪区域 x={x}, y={y}, w={w}, h={h}")
+            # 返回一个小的空白图像，保持与原图像相同的通道数
+            channels = 3 if len(image.shape) == 3 else 1
+            return np.zeros((1, 1, channels), dtype=np.uint8)
+        
+        # 简单的矩形裁剪
+        if len(image.shape) == 3:  # RGB/BGR图像
+            cropped = image[y:y+h, x:x+w].copy()
+        else:  # 灰度图像
+            cropped = image[y:y+h, x:x+w].copy()
+            
+        return cropped
+
+# 保留原有的PolyCropper类，但不再使用它
 class PolyCropper(TextCropper):
     """多边形裁剪实现类 - 支持透明背景"""
     
     def crop(self, image: np.ndarray, polygon: np.ndarray) -> np.ndarray:
         # 计算外接矩形
         x, y, w, h = cv2.boundingRect(polygon)
+        
+        # 检查裁剪区域是否有效
+        if w <= 0 or h <= 0:
+            print(f"警告：无效的裁剪区域 x={x}, y={y}, w={w}, h={h}")
+            # 返回一个小的空白图像，保持与原图像相同的通道数
+            return np.zeros((1, 1, image.shape[2]), dtype=np.uint8)
         
         # 调整多边形坐标为相对于裁剪区域的坐标
         shifted_polygon = polygon - np.array([x, y])
@@ -79,13 +108,13 @@ class PolyCropper(TextCropper):
 class TextAreaCropper:
     """文本区域处理器"""
     
-    def __init__(self, cropper: TextCropper):
+    def __init__(self, cropper: TextCropper = None):
         """初始化文本区域处理器
         
         Args:
-            cropper: 裁剪策略实现
+            cropper: 裁剪策略实现，默认使用矩形裁剪
         """
-        self.cropper = cropper
+        self.cropper = cropper if cropper is not None else RectCropper()
     
     def crop_text_areas(self, image_path: str, json_path: str, output_dir: str, output_format: str = 'png', bg_color: tuple = (255, 255, 255)) -> None:
         """裁剪图像中检测到的文本区域
@@ -165,8 +194,8 @@ if __name__ == "__main__":
     json_path = "./4_output/res.json"
     output_dir = "./test_cropped_output"
     
-    # 创建文本区域处理器并执行裁剪
-    processor = TextAreaCropper(PolyCropper())
+    # 创建文本区域处理器并执行裁剪，使用矩形裁剪
+    processor = TextAreaCropper(RectCropper())
     
     # 使用默认PNG格式（带透明背景）
     processor.crop_text_areas(image_path, json_path, output_dir, output_format='png')

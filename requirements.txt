@@ -1,6 +1,7 @@
 # 项目依赖
 fastapi
-pymupdf
+# pymupdf
+pdfplumber
 numpy
 openai
 opencv_contrib_python
@@ -15,6 +16,8 @@ Requests
 tqdm
 urllib3
 uvicorn
+python-multipart
+
 
 # 开发依赖
 pre-commit>=3.6.2
